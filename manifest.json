@@ -1,0 +1,12 @@
+{
+  "name": "متابعة مصروفاتي",
+  "short_name": "مصروفاتي",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f6f2",
+  "theme_color": "#123f2a",
+  "description": "إدارة الراتب والمصروفات ومسح الفواتير"
+}
