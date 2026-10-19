@@ -39,6 +39,7 @@ input,select,textarea{width:100%;border:1px solid #d7e1d9;border-radius:11px;pad
 @media(max-width:800px){.app{padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.app{padding:9px}header{padding:19px 17px;border-radius:18px;margin-bottom:12px}header p{font-size:13px}nav{gap:6px;padding-bottom:12px}nav button{padding:10px 13px;font-size:13px;border-radius:10px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.card{padding:13px;border-radius:14px}.stat-value{font-size:19px}.stat-label{font-size:12px}#dashboard>.grid:first-child .card{min-height:110px}.section-heading{margin-top:20px}.section-heading h2{font-size:18px}.section-heading .btn{font-size:12px;padding:9px 11px}form{grid-template-columns:1fr}.field.full{grid-column:auto}#transactions .grid{grid-template-columns:1fr!important}.category-row{grid-template-columns:90px minmax(40px,1fr) auto;gap:8px;font-size:12px}.category-row strong{font-size:12px}.category-row span{font-size:12px}#receipt .card,#add .card,#settings .card{padding:14px}.actions .btn{flex:1}table{min-width:560px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media print{body{background:#fff!important}.app{max-width:none;padding:0}header,nav,.footer,.no-print,.print-actions,button{display:none!important}.view{display:none!important}#reports.view.active{display:block!important}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}#reportCategories,#monthlyComparison{break-inside:avoid}body *{visibility:visible}#reports{color:#000}#reports .section-heading h2{font-size:18px}}
 </style>
 </head>
 <body>
@@ -135,6 +136,7 @@ input,select,textarea{width:100%;border:1px solid #d7e1d9;border-radius:11px;pad
       <div class="card"><div class="stat-label">الصافي</div><div class="stat-value" id="reportNet">0.00</div></div>
       <div class="card"><div class="stat-label">عدد العمليات</div><div class="stat-value" id="reportCount">0</div></div>
     </div>
+    <div class="actions print-actions"><button class="btn" id="printReportBtn" type="button">🖨️ طباعة تقرير الشهر / حفظ PDF</button></div>
     <div class="section-heading"><h2>ترتيب الفئات من الأعلى إنفاقًا</h2></div>
     <div id="reportCategories"></div>
     <div class="section-heading"><h2>مقارنة الأشهر الأخيرة</h2></div>
@@ -147,8 +149,7 @@ input,select,textarea{width:100%;border:1px solid #d7e1d9;border-radius:11px;pad
   <div class="card">
     <form id="settingsForm">
       <div class="field"><label for="salary">الراتب الشهري *</label><input id="salary" type="number" min="0" step="0.001" required></div>
-      <div class="field"><label for="country">الدولة *</label><select id="country" required><option value="KW">🇰🇼 الكويت</option><option value="EG">🇪🇬 مصر</option><option value="SA">🇸🇦 السعودية</option><option value="AE">🇦🇪 الإمارات</option><option value="QA">🇶🇦 قطر</option><option value="BH">🇧🇭 البحرين</option><option value="OM">🇴🇲 عُمان</option><option value="JO">🇯🇴 الأردن</option><option value="US">🇺🇸 الولايات المتحدة</option><option value="GB">🇬🇧 المملكة المتحدة</option><option value="IN">🇮🇳 الهند</option></select></div>
-      <div class="field"><label for="currency">العملة حسب الدولة</label><select id="currency" disabled aria-describedby="currencyHelp"><option value="KWD">دينار كويتي (د.ك)</option><option value="EGP">جنيه مصري (ج.م)</option><option value="SAR">ريال سعودي (ر.س)</option><option value="AED">درهم إماراتي (د.إ)</option><option value="QAR">ريال قطري (ر.ق)</option><option value="BHD">دينار بحريني (د.ب)</option><option value="OMR">ريال عُماني (ر.ع)</option><option value="JOD">دينار أردني (د.أ)</option><option value="USD">دولار أمريكي ($)</option><option value="GBP">جنيه إسترليني (£)</option><option value="INR">روبية هندية (₹)</option></select><div class="small" id="currencyHelp">تتحدد العملة تلقائيًا عند اختيار الدولة.</div></div>
+      <div class="field"><label for="country">الدولة</label><select id="country"><option value="KW">الكويت</option><option value="EG">مصر</option><option value="SA">السعودية</option><option value="AE">الإمارات</option><option value="QA">قطر</option><option value="BH">البحرين</option><option value="OM">عُمان</option><option value="JO">الأردن</option><option value="US">الولايات المتحدة</option><option value="GB">المملكة المتحدة</option></select></div><div class="field"><label for="currency">العملة (تتحدد حسب الدولة)</label><select id="currency"><option value="KWD">دينار كويتي (د.ك)</option><option value="EGP">جنيه مصري (ج.م)</option><option value="SAR">ريال سعودي (ر.س)</option><option value="AED">درهم إماراتي (د.إ)</option><option value="QAR">ريال قطري (ر.ق)</option><option value="BHD">دينار بحريني (د.ب)</option><option value="OMR">ريال عُماني (ر.ع)</option><option value="JOD">دينار أردني (د.أ)</option><option value="USD">دولار أمريكي ($)</option><option value="GBP">جنيه إسترليني (£)</option></select></div>
       <div class="field"><label for="rent">الإيجار الشهري</label><input id="rent" type="number" min="0" step="0.001"></div>
       <div class="field"><label for="bills">الفواتير الشهرية</label><input id="bills" type="number" min="0" step="0.001"></div>
       <div class="field"><label for="supplies">ميزانية المستلزمات</label><input id="supplies" type="number" min="0" step="0.001"></div>
@@ -172,8 +173,8 @@ input,select,textarea{width:100%;border:1px solid #d7e1d9;border-radius:11px;pad
 (() => {
 'use strict';
 const DB_KEY = 'motabaatMasrofaty_v1';
-const currencySymbols = {KWD:'د.ك',EGP:'ج.م',SAR:'ر.س',AED:'د.إ',QAR:'ر.ق',BHD:'د.ب',OMR:'ر.ع',JOD:'د.أ',USD:'$',GBP:'£',INR:'₹',other:'عملة'};
-const countryCurrencies = {KW:'KWD',EG:'EGP',SA:'SAR',AE:'AED',QA:'QAR',BH:'BHD',OM:'OMR',JO:'JOD',US:'USD',GB:'GBP',IN:'INR'};
+const currencySymbols = {KWD:'د.ك',EGP:'ج.م',SAR:'ر.س',AED:'د.إ',QAR:'ر.ق',BHD:'د.ب',OMR:'ر.ع',JOD:'د.أ',USD:'$',GBP:'£',other:'عملة'};
+const countryCurrency = {KW:'KWD',EG:'EGP',SA:'SAR',AE:'AED',QA:'QAR',BH:'BHD',OM:'OMR',JO:'JOD',US:'USD',GB:'GBP'};
 const $ = id => document.getElementById(id);
 const today = new Date();
 const dateString = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -254,16 +255,13 @@ $('transactionForm').addEventListener('submit',e=>{
  state.transactions.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),type:$('type').value,amount,category:$('category').value,date:$('date').value,merchant:$('merchant').value.trim(),payment:$('payment').value,notes:$('notes').value.trim(),source:'manual'});
  saveState();e.target.reset();$('date').value=dateString(today);renderAll();showView('dashboard');alert('تم حفظ العملية.');
 });
-$('country').addEventListener('change',()=>{ $('currency').value=countryCurrencies[$('country').value]||'KWD'; });
 $('settingsForm').addEventListener('submit',e=>{
- e.preventDefault();state.settings={salary:Number($('salary').value||0),country:$('country').value,currency:countryCurrencies[$('country').value]||'KWD',rent:Number($('rent').value||0),bills:Number($('bills').value||0),supplies:Number($('supplies').value||0),savings:Number($('savings').value||0)};
+ e.preventDefault();state.settings={salary:Number($('salary').value||0),country:$('country').value,currency:$('currency').value,rent:Number($('rent').value||0),bills:Number($('bills').value||0),supplies:Number($('supplies').value||0),savings:Number($('savings').value||0)};
  saveState();renderAll();alert('تم حفظ الإعدادات.');
 });
-function fillSettings(){
- const country=state.settings.country||Object.keys(countryCurrencies).find(c=>countryCurrencies[c]===state.settings.currency)||'KW';
- $('country').value=country; $('currency').value=countryCurrencies[country]||'KWD';
- for(const k of ['salary','rent','bills','supplies','savings'])$(k).value=state.settings[k]??0;
-}
+function fillSettings(){for(const k of ['salary','country','currency','rent','bills','supplies','savings']){if($(k))$(k).value=state.settings[k]??(k==='currency'?'KWD':k==='country'?'KW':0);}}
+$('country').addEventListener('change',()=>{$('currency').value=countryCurrency[$('country').value]||'KWD';});
+$('printReportBtn').addEventListener('click',()=>{renderReports();document.body.classList.add('printing-report');window.print();setTimeout(()=>document.body.classList.remove('printing-report'),700);});
 $('filterMonth').value=monthString(today);$('reportMonth').value=monthString(today);$('date').value=dateString(today);$('receiptDate').value=dateString(today);
 ['filterMonth','filterType','filterCategory'].forEach(id=>$(id).addEventListener('change',renderTransactions));
 $('reportMonth').addEventListener('change',renderReports);
